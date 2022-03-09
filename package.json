@@ -1,0 +1,14 @@
+{
+  "private": true,
+  "devDependencies": {
+    "@prettier/plugin-php": "^0.18.0",
+    "eslint": "^8.8.0",
+    "eslint-config-prettier": "^8.3.0",
+    "prettier": "^2.5.1",
+    "stylelint": "^14.3.0",
+    "stylelint-config-prettier": "^9.0.3",
+    "stylelint-config-rational-order": "^0.1.2",
+    "stylelint-config-recommended": "^6.0.0",
+    "stylelint-order": "^5.0.0"
+  }
+}
