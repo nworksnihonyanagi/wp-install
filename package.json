@@ -1,14 +1,16 @@
 {
   "private": true,
+  "scripts": {
+    "log": "cp /dev/null public/wp/wp-content/debug.log && tail -f public/wp/wp-content/debug.log"
+  },
   "devDependencies": {
-    "@prettier/plugin-php": "^0.18.0",
-    "eslint": "^8.8.0",
-    "eslint-config-prettier": "^8.3.0",
-    "prettier": "^2.5.1",
-    "stylelint": "^14.3.0",
-    "stylelint-config-prettier": "^9.0.3",
+    "@prettier/plugin-php": "^0.19.3",
+    "eslint": "^8.35.0",
+    "eslint-config-prettier": "^8.6.0",
+    "prettier": "^2.8.4",
+    "stylelint": "^15.2.0",
     "stylelint-config-rational-order": "^0.1.2",
-    "stylelint-config-recommended": "^6.0.0",
-    "stylelint-order": "^5.0.0"
+    "stylelint-config-recommended": "^10.0.1",
+    "stylelint-order": "^6.0.2"
   }
 }

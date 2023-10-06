@@ -10,11 +10,8 @@ services:
     working_dir: /var/www/html/wp
     volumes:
       - ./docker:/docker
+      - ./docker/wordpress/php.ini:/usr/local/etc/php/conf.d/php.ini
       - ./public:/var/www/html
-      - ./vendor:/var/www/vendor
-      - ./.env:/var/www/.env
-      - ./composer.json:/var/www/composer.json
-      - ./composer.lock:/var/www/composer.lock
     env_file: .env
     environment:
       WORDPRESS_DB_HOST: mysql
@@ -43,12 +40,13 @@ services:
       PMA_PASSWORD: root
 
   mysql:
-    image: mysql:5.7
+    image: ghcr.io/fastwebapp/mysql5:latest
     volumes:
       - mysql:/var/lib/mysql
-      - ./docker/mysql:/docker-entrypoint-initdb.d
+      - ./docker/mysql/initdb.d:/docker-entrypoint-initdb.d
     environment:
       MYSQL_DATABASE: wordpress
+      MYSQL_ROOT_HOST: '%'
       MYSQL_ROOT_PASSWORD: root
 
   mailhog:

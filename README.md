@@ -1,4 +1,5 @@
 # プロジェクト名
+
 プロジェクトに合わせて適宜内容を変更してください。
 
 <!------------------------------------->
@@ -26,17 +27,15 @@
 ```
 ├── docker (1)
 │   ├── mysql
-│   │   └── init.sql.gz
+│   │   └── initdb.d
+│   │       └── init.sql.gz
 │   └── wordpress
-│       └── init.sh
-├── public (2)
-│   ├── wp
-│   ├── .htaccess
-│   └── index.php
-├── vendor (3)
-├── .env (4)
-├── composer.json (5)
-└── composer.lock (6)
+│       ├── init.sh
+│       └── php.ini
+└── public (2)
+    ├── .htaccess
+    ├── index.php
+    └── wp
 ```
 
 ### Dockerコンテナ内の配置
@@ -44,32 +43,28 @@
 ```
 ├── docker (1)
 │   ├── mysql
-│   │   └── init.sql.gz
+│   │   └── initdb.d
+│   │       └── init.sql.gz
 │   └── wordpress
-│       └── init.sh
+│       ├── init.sh
+│       └── php.ini
 └── var
     └── www
-         ├── html (2)
-         │   ├── wp
-         │   ├── .htaccess
-         │   └── index.php
-         ├── vendor (3)
-         ├── .env (4)
-         ├── composer.json (5)
-         └── composer.lock (6)
+        └── html (2)
+            ├── .htaccess
+            ├── index.php
+            └── wp
 ```
 
 ### 主なファイル・ディレクトリ
 
 | パス | 説明 |
 | - | - |
-| `docker/mysql/init.sql.gz` | Dockerコンテナの起動時に実行されるSQLファイル |
+| `docker/mysql/initdb.d/init.sql.gz` | Dockerコンテナの起動時に実行されるSQLファイル |
 | `docker/wordpress/init.sh` | WordPressのインストール用のスクリプト |
+| `docker/wordpress/php.ini` | PHPの設定 |
 | `public` | ウェブサーバのドキュメントルート |
 | `public/wp` | WordPressのインストール場所 |
-| `vendor` | Composerパッケージのインストール場所 |
-| `.env` | 環境変数の設定 |
-| `composer.json` | Composerパッケージの設定 |
 
 <!------------------------------------->
 
@@ -123,8 +118,6 @@ docker-compose exec -u www-data wordpress bash /docker/wordpress/init.sh
 | 一般 &raquo; 時刻形式 | `H:i` | カスタム `g:i a` |
 | 一般 &raquo; 週の始まり | 日曜日 | 月曜日 |
 | ディスカッション &raquo; デフォルトの投稿設定 | すべてOFF | すべてON |
-| メディア &raquo; サムネイルのサイズ &raquo; 幅 | `0` | `150` |
-| メディア &raquo; サムネイルのサイズ &raquo; 高さ | `0` | `150` |
 | パーマリンク設定 &raquo; 共通設定 | カスタム構造 `/%post_id%/` | 日付と投稿名 |
 
 <!------------------------------------->
@@ -159,7 +152,7 @@ wp search-replace https://example.com http://localhost
 例）データベースをSQLファイルとしてエクスポート
 
 ```sh
-wp db export /docker/mysql/example.sql
+wp db export /docker/mysql/initdb.d/example.sql
 ```
 
 Dockerコンテナから出る
@@ -171,54 +164,11 @@ exit
 ### Dockerコンテナのデータベースを保存
 
 ```sh
-docker-compose exec -u www-data wordpress bash -c "wp db export - | gzip -c > /docker/mysql/init.sql.gz"
+docker-compose exec -u www-data wordpress bash -c "wp db export - | gzip -c > /docker/mysql/initdb.d/init.sql.gz"
 ```
 
 ### Dockerコンテナを終了
 
 ```sh
 docker-compose down -v
-```
-
-<!------------------------------------->
-
-## Composer
-
-WordPressの他にPHPライブラリが必要な場合に使用できます。
-
-### パッケージのインストール
-
-```sh
-docker-compose exec -u www-data -w /var/www wordpress composer install
-```
-
-### Dockerコンテナに入る
-
-```sh
-docker-compose exec -u www-data -w /var/www wordpress bash
-```
-
-例）phpdotenvを追加
-
-```sh
-composer require vlucas/phpdotenv
-```
-
-Dockerコンテナから出る
-
-```sh
-exit
-```
-
-### WordPressでの利用方法
-
-`public/wp/wp-config.php` で `vendor/autoload.php` を読み込みます。
-
-```php
-define('COMPOSER_WORKING_DIR', dirname(dirname(__DIR__)));
-require COMPOSER_WORKING_DIR . '/vendor/autoload.php';
-
-// 例）phpdotenvを利用
-$dotenv = Dotenv\Dotenv::createImmutable(COMPOSER_WORKING_DIR);
-$dotenv->load();
 ```
